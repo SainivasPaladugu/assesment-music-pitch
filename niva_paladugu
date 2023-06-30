@@ -1,0 +1,72 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Solution {
+  public static boolean singable(String[] song, String lowestNote, String highestNote) {
+    // Map to store the pitch-to-index mapping
+    Map<Character, Integer> pitchToIndex = new HashMap<>();
+    pitchToIndex.put('C', 0);
+    pitchToIndex.put('D', 1);
+    pitchToIndex.put('E', 2);
+    pitchToIndex.put('F', 3);
+    pitchToIndex.put('G', 4);
+    pitchToIndex.put('A', 5);
+    pitchToIndex.put('B', 6);
+
+    // Extract the octave numbers from the lowest and highest notes
+    int lowestOctave = Integer.parseInt(lowestNote.substring(1));
+    int highestOctave = Integer.parseInt(highestNote.substring(1));
+
+    // Extract the pitch index from the lowest and highest notes
+    int singerLowest = pitchToIndex.get(lowestNote.charAt(0));
+    int singerHighest = pitchToIndex.get(highestNote.charAt(0));
+
+    // Iterate over each note in the song
+    for (String note : song) {
+      // Extract the octave number and pitch index of the current note
+      int noteOctave = Integer.parseInt(note.substring(1));
+      int notePitch = pitchToIndex.get(note.charAt(0));
+
+      // Check if the note is outside the singer's range
+      if (noteOctave < lowestOctave || noteOctave > highestOctave) {
+        return false;
+      }
+
+      // Check if the note is at the lowest octave but lower in pitch than the singer's lowest note
+      if (noteOctave == lowestOctave && notePitch < singerLowest) {
+        return false;
+      }
+
+      // Check if the note is at the highest octave but higher in pitch than the singer's highest note
+      if (noteOctave == highestOctave && notePitch > singerHighest) {
+        return false;
+      }
+    }
+
+    // All notes are within the singer's range
+    return true;
+  }
+
+  public static void main(String[] argv) throws IOException {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    // Read the song notes from the user
+    System.out.print("Enter the song notes (separated by space): ");
+    String[] song = br.readLine().trim().split(" ");
+
+    // Read the lowest and highest notes from the user
+    System.out.print("Enter the lowest note: ");
+    String lowestNote = br.readLine().trim();
+    System.out.print("Enter the highest note: ");
+    String highestNote = br.readLine().trim();
+
+    // Check if the song is singable
+    boolean isSingable = singable(song, lowestNote, highestNote);
+
+    // Output the result
+    System.out.println("Is the song singable? " + isSingable);
+  }
+}
